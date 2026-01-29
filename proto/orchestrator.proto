@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package Orchestrator;
+
+import "google/protobuf/timestamp.proto";
+/*
+	Proto File for Defining the structure of 
+	an orchestrator command.
+*/
+message OrchestratorCommand {
+	// book keeping
+	uint64 command_id = 1;
+	google.protobuf.Timestamp = 2;
+	oneof command_type {
+		StartTraining start_training = 3;
+		BeginCheckpoint begin_checkpoint = 4;
+	}
+}
+
+message StartTraining {
+	uint64 worker_id = 1;
+	uint64 world_size = 2;
+	string model = 3;
+	double learning_rate = 4;
+	uint64 batch_size = 5;
+	uint64 epochs = 6;
+	uint64 seed = 7;
+}
+
+message BeginCheckpoint {
+	// TODO
+}
+
+message RestoreCheckpoint {
+	// TODO
+}
+
+message ResumeTraining {
+	// TODO
+}
+
+message AbortCheckpoint {
+	// TODO
+}
+
+message Shutdown {
+	// TODO
+}

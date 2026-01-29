@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package WorkerSnapshot;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+
+message WorkerStateSnapshot {
+	string run_id = 1;
+	string worker_id = 2;
+	uint32 rank = 3;
+	uint32 world_size = 4;
+
+	WorkerPhase phase = 5;
+	google.protobuf.Timestamp observed_at = 6;
+	google.protobuf.Duration uptime = 7;
+
+	Progress progress 8;
+	// TODO: Add More
+}
+
+enum WorkerPhase {
+	WORKER_PHASE_UNSPECIFIED = 0;
+	WORKER_PHASE_STARTING = 1;
+	WORKER_PHASE_IDLE = 2;
+	WORKER_PHASE_TRAINING = 3;
+	WORKER_PHASE_CHECKPOINTING = 4;
+	WORKER_PHASE_RESTORING = 5;
+	WORKER_PHASE_PAUSED = 6;
+	WORKER_PHASE_DRAINING = 7;
+	WORKER_PHASE_ERROR = 8;
+}
+
+message Progress {
+	uint64 epoch_num = 1;
+	uint64 step = 2;
+	double loss = 3;
+	double throughput_samples_per_sec = 4;
+}
