@@ -1,9 +1,17 @@
 syntax = "proto3";
 
-package WorkerSnapshot;
+package agent;
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/duration.proto";
+
+service AgentService {
+	rpc SendWorkerState(GetWorkerStateRequest) returns (WorkerStateSnapshot);
+}
+
+message GetWorkerStateRequest {
+	// Empty - no fields needed
+}
 
 message WorkerStateSnapshot {
 	string run_id = 1;
@@ -12,10 +20,14 @@ message WorkerStateSnapshot {
 	uint32 world_size = 4;
 
 	WorkerPhase phase = 5;
-	google.protobuf.Timestamp observed_at = 6;
-	google.protobuf.Duration uptime = 7;
+	uint64 last_checkpoint_id = 6;
+	optional CheckpointInfo checkpoint_in_progress = 7;
 
-	Progress progress 8;
+	optional uint64 last_executed_command_id = 8;
+	optional uint64 current_command_id = 9;
+
+	google.protobuf.Timestamp timestamp = 10;
+	optional string err = 11;
 	// TODO: Add More
 }
 
@@ -29,6 +41,21 @@ enum WorkerPhase {
 	WORKER_PHASE_PAUSED = 6;
 	WORKER_PHASE_DRAINING = 7;
 	WORKER_PHASE_ERROR = 8;
+}
+
+
+enum CheckpointStatus {
+  CHECKPOINT_STATUS_UNSPECIFIED = 0;
+  CHECKPOINT_STATUS_NONE = 1;
+  CHECKPOINT_STATUS_IN_PROGRESS = 2;
+  CHECKPOINT_STATUS_COMPLETE = 3;
+  CHECKPOINT_STATUS_FAILED = 4;
+}
+
+message CheckpointInfo {
+	uint64 checkpoint_id = 1;
+	CheckpointStatus status = 2;
+	optional string blob_path = 3; 
 }
 
 message Progress {

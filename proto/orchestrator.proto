@@ -1,19 +1,15 @@
-syntax = "proto3";
-
-package Orchestrator;
-
-import "google/protobuf/timestamp.proto";
-/*
-	Proto File for Defining the structure of 
-	an orchestrator command.
-*/
 message OrchestratorCommand {
 	// book keeping
 	uint64 command_id = 1;
-	google.protobuf.Timestamp = 2;
+	google.protobuf.Timestamp issued_at = 2;
 	oneof command_type {
 		StartTraining start_training = 3;
 		BeginCheckpoint begin_checkpoint = 4;
+		RestoreCheckpoint restore_checkpoint = 5;
+		ResumeTraining resume_training = 6;
+		AbortCheckpoint abort_checkpoint = 7;
+		Shutdown shutdown = 8;
+		NoOp no_op = 9;
 	}
 }
 
@@ -28,21 +24,31 @@ message StartTraining {
 }
 
 message BeginCheckpoint {
-	// TODO
+	uint64 command_id = 1;
+	string checkpoint_id = 2;
+	uint64 target_step = 3;
 }
 
 message RestoreCheckpoint {
-	// TODO
+	string command_id = 1;
+	string checkpoint_id = 2;
+	string path_to_checkpoint = 3;
 }
 
 message ResumeTraining {
-	// TODO
+	string command_id = 1;
+	string from_step = 2;
 }
 
 message AbortCheckpoint {
-	// TODO
+	string command_id = 1;
+	optional string reason = 2;
 }
 
 message Shutdown {
-	// TODO
+	optional string reason = 1;
+}
+
+message NoOp {
+	// keep empty lmfao
 }
