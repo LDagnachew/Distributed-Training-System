@@ -1,3 +1,17 @@
+syntax = "proto3";
+
+package orchestrator;
+
+service OrchestratorService {
+	rpc SendCommand(GetOrchestratorCommand) returns (OrchestratorCommand);
+}
+
+message GetOrchestratorCommand {
+	// Empty - for now
+}
+
+import "google/protobuf/timestamp.proto";
+
 message OrchestratorCommand {
 	// book keeping
 	uint64 command_id = 1;

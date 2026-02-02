@@ -204,6 +204,7 @@ name = "coordinator"
 version = "0.1.0"
 dependencies = [
  "prost 0.13.5",
+ "prost-types",
  "tokio",
  "tokio-stream",
  "tonic 0.12.3",
