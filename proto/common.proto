@@ -1,0 +1,132 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package distributed_trainer;
+
+// ============================================================================
+// Service
+// ============================================================================
+
+service OrchestratorService {
+  // Worker reports its state, coordinator responds with command
+  rpc ReportState(WorkerStateSnapshot) returns (OrchestratorCommand);
+}
+
+// ============================================================================
+// Worker State (Worker → Coordinator)
+// ============================================================================
+
+message WorkerStateSnapshot {
+  // Identity
+  string run_id = 1;
+  string worker_id = 2;
+  uint32 rank = 3;
+  uint32 world_size = 4;
+
+  // Status
+  WorkerPhase phase = 5;
+  uint64 current_step = 6;
+
+  // Checkpoint tracking
+  optional uint64 last_checkpoint_id = 7;
+  optional CheckpointInfo checkpoint_in_progress = 8;
+
+  // Command tracking
+  optional uint64 last_executed_command_id = 9;
+  optional uint64 current_command_id = 10;
+
+  // Metadata
+  google.protobuf.Timestamp timestamp = 11;
+  optional string error_message = 12;
+  
+  // Optional progress info
+  optional Progress progress = 13;
+}
+
+enum WorkerPhase {
+  WORKER_PHASE_UNSPECIFIED = 0;
+  WORKER_PHASE_STARTING = 1;
+  WORKER_PHASE_IDLE = 2;
+  WORKER_PHASE_TRAINING = 3;
+  WORKER_PHASE_CHECKPOINTING = 4;
+  WORKER_PHASE_RESTORING = 5;
+  WORKER_PHASE_PAUSED = 6;
+  WORKER_PHASE_DRAINING = 7;
+  WORKER_PHASE_ERROR = 8;
+}
+
+message CheckpointInfo {
+  uint64 checkpoint_id = 1;
+  CheckpointStatus status = 2;
+  optional string blob_path = 3;
+}
+
+enum CheckpointStatus {
+  CHECKPOINT_STATUS_UNSPECIFIED = 0;
+  CHECKPOINT_STATUS_NONE = 1;
+  CHECKPOINT_STATUS_IN_PROGRESS = 2;
+  CHECKPOINT_STATUS_COMPLETE = 3;
+  CHECKPOINT_STATUS_FAILED = 4;
+}
+
+message Progress {
+  uint64 epoch = 1;
+  uint64 step = 2;
+  optional double loss = 3;
+  optional double throughput_samples_per_sec = 4;
+}
+
+// ============================================================================
+// Commands (Coordinator → Worker)
+// ============================================================================
+
+message OrchestratorCommand {
+  uint64 command_id = 1;
+  google.protobuf.Timestamp issued_at = 2;
+  
+  oneof command_type {
+    StartTraining start_training = 3;
+    BeginCheckpoint begin_checkpoint = 4;
+    RestoreCheckpoint restore_checkpoint = 5;
+    ResumeTraining resume_training = 6;
+    AbortCheckpoint abort_checkpoint = 7;
+    Shutdown shutdown = 8;
+    NoOp no_op = 9;
+  }
+}
+
+message StartTraining {
+  string worker_id = 1;
+  uint32 world_size = 2;
+  uint64 seed = 3;
+  optional uint64 target_step = 4;
+}
+
+message BeginCheckpoint {
+  uint64 checkpoint_id = 1;
+  uint64 target_step = 2;
+}
+
+message RestoreCheckpoint {
+  uint64 checkpoint_id = 1;
+  optional string checkpoint_path = 2;
+}
+
+message ResumeTraining {
+  uint64 from_step = 1;
+}
+
+message AbortCheckpoint {
+  uint64 checkpoint_id = 1;
+  optional string reason = 2;
+}
+
+message Shutdown {
+  optional string reason = 1;
+  bool graceful = 2;
+}
+
+message NoOp {
+  // Explicitly empty
+}
