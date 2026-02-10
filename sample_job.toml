@@ -1,0 +1,27 @@
+# -------------------------
+# 1. Job identity & scale
+run_id = "run_001"
+world_size = 8 # number of worker nodes need (optional)
+
+# -------------------------
+# 2. Training config
+[training]
+model = "logistic_regression"
+learning_rate = 0.01
+batch_size = 1024
+epochs = 3
+seed = 42
+
+# -------------------------
+# 3. Data configuration
+[data]
+dataset_url = "s3://datasets/click_logs/"
+sharding = "rank_modulo"
+shuffle = true
+
+# -------------------------
+# 4. Checkpoint policy
+[checkpoint]
+interval_steps = 500
+storage_prefix = "s3://checkpoints/run_001/"
+retain_last = 3

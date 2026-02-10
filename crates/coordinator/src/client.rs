@@ -26,8 +26,7 @@ impl OrchestratorService for MyOrchestratorService {
     }
 }
 
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+pub async fn boot_coordinator() -> Result<(), Box<dyn std::error::Error>> {
     let addr = "[::1]:50051".parse()?;
     let agent_service = MyOrchestratorService::default();
 
@@ -37,6 +36,5 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .add_service(OrchestratorServiceServer::new(agent_service))
         .serve(addr)
         .await?;
-
     Ok(())
 }
