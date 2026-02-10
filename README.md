@@ -1,4 +1,4 @@
-# Distributed Trainer
+# Distributed Trainer (In Progress)
 
 A distributed training runtime focused on **explicit orchestration**, **coordinated checkpointing**, and **crash-safe recovery**.
 
