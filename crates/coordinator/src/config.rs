@@ -40,7 +40,7 @@ pub struct JobConfiguration {
 impl JobConfiguration {
 	pub fn parse_job(job_name: &str) -> Result<JobConfiguration, Box<dyn std::error::Error>> {
 		let config: JobConfig = toml::from_str(job_name)?;
-		println!("run_id")
+		println!("run_id: {}", config.run_id);
 		Ok(JobConfiguration { config })
 	}
 }

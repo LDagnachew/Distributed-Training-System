@@ -1,11 +1,26 @@
 use tonic::{transport::Server, Request, Response, Status};
 
-pub mod distributed_trainer {
-    tonic::include_proto!("distributed_trainer");
-}
-use distributed_trainer::orchestrator_service_server::{OrchestratorService, OrchestratorServiceServer};
-use distributed_trainer::{OrchestratorCommand, NoOp, WorkerStateSnapshot};
-use distributed_trainer::orchestrator_command::CommandType;
+use common::{
+    // Proto-generated types
+    WorkerStateSnapshot,
+    OrchestratorCommand,
+    WorkerPhase,
+    CheckpointStatus,
+    CheckpointInfo,
+    orchestrator_command::CommandType,
+    
+    // gRPC service (for server side)
+    distributed_trainer::orchestrator_service_server::{
+        OrchestratorService,
+        OrchestratorServiceServer,
+    },
+
+	distributed_trainer::{
+		NoOp,
+	},
+
+
+};
 
 #[derive(Debug, Default)]
 pub struct MyOrchestratorService {}
@@ -14,13 +29,9 @@ pub struct MyOrchestratorService {}
 impl OrchestratorService for MyOrchestratorService {
     async fn report_state(
         &self,
-        _request: Request<WorkerStateSnapshot>,
-    ) -> Result<Response<OrchestratorCommand>, Status> {
-        let reply = OrchestratorCommand {
-            command_id: 1,
-            issued_at: None,
-            command_type: Some(CommandType::NoOp(NoOp {})),
-        };
+        request: tonic::Request<WorkerStateSnapshot>,
+    ) -> Result<tonic::Response<OrchestratorCommand>, tonic::Status> {
+        let reply: OrchestratorCommand = crate::JobController::compute_action(request.into_inner());
         println!("I actually managed to recieve a command!");
         Ok(Response::new(reply))
     }
@@ -28,7 +39,7 @@ impl OrchestratorService for MyOrchestratorService {
 
 pub async fn boot_coordinator() -> Result<(), Box<dyn std::error::Error>> {
     let addr = "[::1]:50051".parse()?;
-    let agent_service = MyOrchestratorService::default();
+    let agent_service: MyOrchestratorService = MyOrchestratorService::default();
 
     println!("OrchestratorService listening on {}", addr);
 

@@ -11,6 +11,8 @@ tokio = { version = "1.44.0", features = ["macros", "rt-multi-thread"] }
 tokio-stream = "0.1.17"
 toml = "0.8"
 serde = { version = "1.0", features = ["derive"] }
+common = { path = "../common" }
+
 
 [build-dependencies]
 tonic-build = "0.12.3"
