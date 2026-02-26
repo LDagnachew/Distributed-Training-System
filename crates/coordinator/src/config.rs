@@ -1,5 +1,4 @@
-use core::str;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct JobConfig {
@@ -42,5 +41,17 @@ impl JobConfiguration {
 		let config: JobConfig = toml::from_str(job_name)?;
 		println!("run_id: {}", config.run_id);
 		Ok(JobConfiguration { config })
+	}
+
+	pub fn run_id(&self) -> &str {
+		&self.config.run_id
+	}
+
+	pub fn world_size(&self) -> u32 {
+		self.config.world_size as u32
+	}
+
+	pub fn seed(&self) -> u64 {
+		self.config.training.seed as u64
 	}
 }

@@ -63,7 +63,8 @@ impl WorkerAgent {
                     eprintln!("Worker {} failed to report state: {}", self.worker_id, e);
                     if e.to_string().contains("h2 protocol error") {
                         eprintln!(
-                            "Hint: verify --orchestrator points to the coordinator gRPC endpoint (e.g. http://[::1]:50051) and that coordinator is running."
+                            "Hint: verify --orchestrator points to the coordinator gRPC endpoint 
+                            (e.g. http://[::1]:50051) and that coordinator is running."
                         );
                     }
                 }
@@ -111,6 +112,7 @@ impl WorkerAgent {
                 self.phase = WorkerPhase::Checkpointing;
                 // Simulate checkpoint delay
                 // (In real version, this would be async)
+                // TODO: Async + Call wait().
             }
             Some(CommandType::ResumeTraining(_)) => {
                 println!("Worker {}: Received ResumeTraining command", self.worker_id);

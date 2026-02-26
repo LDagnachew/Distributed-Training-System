@@ -1,29 +1,26 @@
-use tonic::{transport::Server, Request, Response, Status};
+use std::sync::Arc;
+use tokio::sync::Mutex;
+use tonic::{transport::Server, Response};
 
 use common::{
-    // Proto-generated types
     WorkerStateSnapshot,
     OrchestratorCommand,
-    WorkerPhase,
-    CheckpointStatus,
-    CheckpointInfo,
-    orchestrator_command::CommandType,
-    
-    // gRPC service (for server side)
     distributed_trainer::orchestrator_service_server::{
         OrchestratorService,
         OrchestratorServiceServer,
     },
-
-	distributed_trainer::{
-		NoOp,
-	},
-
-
 };
+use crate::controller::JobController;
 
-#[derive(Debug, Default)]
-pub struct MyOrchestratorService {}
+pub struct MyOrchestratorService {
+    controller: Arc<Mutex<JobController>>,
+}
+
+impl MyOrchestratorService {
+    pub fn new(controller: Arc<Mutex<JobController>>) -> Self {
+        Self { controller }
+    }
+}
 
 #[tonic::async_trait]
 impl OrchestratorService for MyOrchestratorService {
@@ -31,15 +28,16 @@ impl OrchestratorService for MyOrchestratorService {
         &self,
         request: tonic::Request<WorkerStateSnapshot>,
     ) -> Result<tonic::Response<OrchestratorCommand>, tonic::Status> {
-        let reply: OrchestratorCommand = crate::JobController::compute_action(request.into_inner());
+        let mut controller = self.controller.lock().await;
+        let reply = controller.compute_action(request.into_inner());
         println!("I actually managed to recieve a command!");
         Ok(Response::new(reply))
     }
 }
 
-pub async fn boot_coordinator() -> Result<(), Box<dyn std::error::Error>> {
+pub async fn boot_coordinator(controller: Arc<Mutex<JobController>>) -> Result<(), Box<dyn std::error::Error>> {
     let addr = "[::1]:50051".parse()?;
-    let agent_service: MyOrchestratorService = MyOrchestratorService::default();
+    let agent_service = MyOrchestratorService::new(controller);
 
     println!("OrchestratorService listening on {}", addr);
 
