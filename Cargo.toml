@@ -2,3 +2,7 @@
 members = ["crates/*"]
 
 resolver = "2"
+
+[workspace.dependencies]
+tokio = "1.44.0"
+tonic = "0.12.3"

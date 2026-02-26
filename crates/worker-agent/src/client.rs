@@ -57,7 +57,7 @@ impl WorkerAgent {
                 checkpoint_in_progress: None,
                 last_executed_command_id: None,
                 current_command_id: None,
-                timestamp: Some(prost_types::Timestamp::from(std::time::SystemTime::now())),
+                timestamp: Some(std::time::SystemTime::now().into()),
                 error_message: None,
                 progress: None,
             };

@@ -19,7 +19,6 @@ use common::{
 
 
 };
-
 use crate::config::JobConfiguration;
 
 pub struct JobController {
@@ -41,7 +40,7 @@ impl JobController {
             command_type: Some(CommandType::NoOp(NoOp {})),
         };
 		reply
-	}
+	} 
 
 	fn load_checkpoint() {
         todo!("Implement when making checkpointing")
