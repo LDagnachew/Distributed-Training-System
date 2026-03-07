@@ -97,10 +97,25 @@ message OrchestratorCommand {
 }
 
 message StartTraining {
+  // Identity
   string worker_id = 1;
   uint32 world_size = 2;
+
+  // Basic training control
   uint64 seed = 3;
   optional uint64 target_step = 4;
+
+  // Job-level context and hyperparameters (mirrors job config)
+  string run_id = 5;
+  string model = 6;
+  double learning_rate = 7;
+  uint64 batch_size = 8;
+  uint64 epochs = 9;
+
+  // Data and checkpoint configuration
+  string dataset_uri = 10;
+  string checkpoint_storage_prefix = 11;
+  uint64 checkpoint_interval_steps = 12;
 }
 
 message BeginCheckpoint {

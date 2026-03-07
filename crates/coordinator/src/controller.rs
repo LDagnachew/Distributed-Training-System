@@ -50,6 +50,14 @@ impl JobController {
                 world_size: self.job_config.world_size(),
                 seed: self.job_config.seed(),
                 target_step: None,
+                run_id: self.job_config.run_id().to_string(),
+                model: self.job_config.model().to_string(),
+                learning_rate: self.job_config.learning_rate(),
+                batch_size: self.job_config.batch_size(),
+                epochs: self.job_config.epochs(),
+                dataset_uri: self.job_config.dataset_uri().to_string(),
+                checkpoint_storage_prefix: self.job_config.checkpoint_storage_prefix().to_string(),
+                checkpoint_interval_steps: self.job_config.checkpoint_interval_steps(),
             });
         }
 

@@ -54,4 +54,33 @@ impl JobConfiguration {
 	pub fn seed(&self) -> u64 {
 		self.config.training.seed as u64
 	}
+
+    pub fn model(&self) -> &str {
+        &self.config.training.model
+    }
+
+    pub fn learning_rate(&self) -> f64 {
+        self.config.training.learning_rate
+    }
+
+    pub fn batch_size(&self) -> u64 {
+        self.config.training.batch_size as u64
+    }
+
+    pub fn epochs(&self) -> u64 {
+        self.config.training.epochs as u64
+    }
+
+    /// Returns the dataset URI (currently stored as `dataset_url` in the job file).
+    pub fn dataset_uri(&self) -> &str {
+        &self.config.data.dataset_url
+    }
+
+    pub fn checkpoint_storage_prefix(&self) -> &str {
+        &self.config.checkpoint.storage_prefix
+    }
+
+    pub fn checkpoint_interval_steps(&self) -> u64 {
+        self.config.checkpoint.interval_steps as u64
+    }
 }

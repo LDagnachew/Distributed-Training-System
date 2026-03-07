@@ -30,7 +30,6 @@ impl OrchestratorService for MyOrchestratorService {
     ) -> Result<tonic::Response<OrchestratorCommand>, tonic::Status> {
         let mut controller = self.controller.lock().await;
         let reply = controller.compute_action(request.into_inner());
-        println!("I actually managed to recieve a command!");
         Ok(Response::new(reply))
     }
 }

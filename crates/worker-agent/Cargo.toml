@@ -10,6 +10,7 @@ tokio = { workspace = true, features = ["full"] }
 tonic = { workspace = true }
 prost-types = "0.12"
 clap = { version = "4", features = ["derive"] }
+storage = { path = "../storage" }
 
 [build-dependencies]
 tonic-build = "0.12.3"

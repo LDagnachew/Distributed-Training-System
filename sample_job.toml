@@ -15,7 +15,7 @@ seed = 42
 # -------------------------
 # 3. Data configuration
 [data]
-dataset_url = "s3://datasets/click_logs/"
+dataset_url = "s3://ml-bucket/datasets/click_logs/"
 sharding = "rank_modulo"
 shuffle = true
 
@@ -23,5 +23,5 @@ shuffle = true
 # 4. Checkpoint policy
 [checkpoint]
 interval_steps = 500
-storage_prefix = "s3://checkpoints/run_001/"
+storage_prefix = "s3://ml-bucket/checkpoints/run_001/"
 retain_last = 3

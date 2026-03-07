@@ -244,6 +244,7 @@ dependencies = [
 name = "coordinator"
 version = "0.1.0"
 dependencies = [
+ "clap",
  "common",
  "prost 0.13.5",
  "prost-types 0.13.5",
@@ -1463,6 +1464,7 @@ dependencies = [
  "clap",
  "common",
  "prost-types 0.12.6",
+ "storage",
  "tokio",
  "tonic",
  "tonic-build",
