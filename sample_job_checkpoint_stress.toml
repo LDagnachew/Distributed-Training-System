@@ -1,0 +1,22 @@
+# High-step checkpoint stress job.
+# Note: trainer currently computes total_steps = epochs * 50.
+
+run_id = "run_checkpoint_stress_001"
+world_size = 1
+
+[training]
+model = "logistic_regression"
+learning_rate = 0.01
+batch_size = 1024
+epochs = 200           # => 10,000 total steps
+seed = 42
+
+[data]
+dataset_url = "s3://ml-bucket/datasets/click_logs/"
+sharding = "rank_modulo"
+shuffle = true
+
+[checkpoint]
+interval_steps = 100   # checkpoint every 100 steps (about 100 checkpoints total)
+storage_prefix = "s3://ml-bucket/checkpoints"
+retain_last = 20

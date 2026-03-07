@@ -23,5 +23,5 @@ shuffle = true
 # 4. Checkpoint policy
 [checkpoint]
 interval_steps = 500
-storage_prefix = "s3://ml-bucket/checkpoints/run_001/"
+storage_prefix = "s3://ml-bucket/checkpoints"
 retain_last = 3
